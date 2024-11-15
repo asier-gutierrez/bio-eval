@@ -33,7 +33,7 @@ class ModelEvaluatorMLM:
             d = copy.deepcopy(data)
 
     def evaluate_mlm_swm(self, pipeline, texts, refs):
-
+        accuracies = []
         for text, ref in zip(texts, refs):
             preds = pipeline(text, targets=ref)
             accuracies.extend([pred['score'] for pred in preds])
