@@ -1,6 +1,8 @@
+import json
 import copy
 
 import numpy as np
+import tqdm
 
 import bioeval.snomed.dataset
 import bioeval.constants.general
@@ -14,7 +16,7 @@ class ModelEvaluatorMLM:
             pipeline,
             dataset: bioeval.snomed.dataset.DatasetMLM,
             device: str,
-            output_path: str,
+            output_file: str,
             **kwargs
     ):
         self.model = model
@@ -22,23 +24,35 @@ class ModelEvaluatorMLM:
         self.pipeline = pipeline
         self.dataset = dataset
         self.device = device
-        self.output_path = output_path
+        self.output_file = output_file
 
     def evaluate(self):
         if self.dataset.mask == bioeval.constants.general.MaskingStrategy.SWM:
             eval_func = self.evaluate_mlm_swm
         else:
             eval_func = self.evaluate_mlm_wwm
-        for data in self.dataset.data:
-            d = copy.deepcopy(data)
+        with open(self.output_file, 'w', encoding='utf-8') as f:
+            for data in tqdm.tqdm(self.dataset.data):
+                d = copy.deepcopy(data)
+                texts_generated = []
+                masks = []
+                for generation in d['generations']:
+                    texts_generated.append(generation['text_generated'])
+                    masks.append(generation['mask'])
+                accuracies = eval_func(self.pipeline, texts_generated, masks)
+                for generation, accuracy in zip(d['generations'], accuracies):
+                    generation['accuracy'] = accuracy
+                f.write(f"{json.dumps(d)}\n")
 
-    def evaluate_mlm_swm(self, pipeline, texts, refs):
+    @staticmethod
+    def evaluate_mlm_swm(pipeline, texts, refs):
         accuracies = []
         for text, ref in zip(texts, refs):
             preds = pipeline(text, targets=ref)
             accuracies.extend([pred['score'] for pred in preds])
         return accuracies
 
+    @staticmethod
     def evaluate_mlm_wwm(pipeline, texts, refs):
         accuracies = []
         for text, ref in zip(texts, refs):
@@ -60,7 +74,7 @@ class ModelEvaluatorCLM:
             pipeline,
             dataset: bioeval.snomed.dataset.DatasetCLM,
             device: str,
-            output_path: str,
+            output_file: str,
             **kwargs
     ):
         self.model = model
@@ -68,20 +82,22 @@ class ModelEvaluatorCLM:
         self.pipeline = pipeline
         self.dataset = dataset
         self.device = device
-        self.output_path = output_path
+        self.output_file = output_file
 
     def evaluate(self):
-        for data in self.dataset.data:
-            d = copy.deepcopy(data)
-            d['scores'] = []
-            for generation in d['generations']:
-                text_generated = generation['text_generated']
-                mask = generation['mask']
-                score = self.evaluate_inner(
-                    text_generated=text_generated,
-                    mask=mask
-                )
-                d['scores'].append(score)
+        with open(self.output_file, 'w', encoding='utf-8') as f:
+            for data in tqdm.tqdm(self.dataset.data):
+                d = copy.deepcopy(data)
+                d['scores'] = []
+                for generation in d['generations']:
+                    text_generated = generation['text_generated']
+                    mask = generation['mask']
+                    score = self.evaluate_inner(
+                        text_generated=text_generated,
+                        mask=mask
+                    )
+                    d['scores'].append(score)
+                f.write(f"{json.dumps(d)}\n")
 
     def evaluate_inner(self, text_generated, mask):
         inputs = self.tokenizer(

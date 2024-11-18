@@ -1,3 +1,4 @@
+import re
 import linecache
 import json
 import tqdm
@@ -20,12 +21,12 @@ def load_dataset(
                 n_lines += 1
 
         n_elements = math.ceil(n_lines * sampling)
-        indices = list(range(n_elements))
+        indices = list(range(n_elements-1))
         random.shuffle(indices)
         indices = indices[:n_elements]
         chunks = []
         for idx in indices:
-            line = linecache.getline(snomed_path, idx)
+            line = linecache.getline(snomed_path, idx+1)
             chunk = json.loads(line)
             chunks.append(chunk)
     else:
@@ -95,8 +96,8 @@ class DatasetMLM:
         self.snomed_path = snomed_path
         self.tokenizer = tokenizer
         self.sampling = sampling
-        if kwargs and 'mask' in kwargs:
-            self.mask = kwargs['mask']
+        if kwargs and 'masking' in kwargs:
+            self.mask = kwargs['masking']
         else:
             self.mask = bioeval.constants.general.MaskingStrategy.SWM
 
@@ -123,6 +124,7 @@ class DatasetMLM:
     @staticmethod
     def group_same_text_masks(texts, masks):
         texts_masks = collections.defaultdict(list)
+        assert(len(texts) == len(masks))
         for k, v in zip(texts, masks):
             texts_masks[k].append(v)
         return texts_masks.keys(), texts_masks.values()
@@ -167,7 +169,7 @@ class DatasetMLM:
         return texts_generated
 
     @staticmethod
-    def mask_swm(tokenizer, text):
+    def mask_swm(text, tokenizer):
         tokenized_text = tokenizer.encode(text)
         selection = ''
         attempts = 0
@@ -184,19 +186,25 @@ class DatasetMLM:
             masked_text = masked_text.replace(tokenizer.bos_token + ' ', '')
         if tokenizer.eos_token:
             masked_text = masked_text.replace(tokenizer.eos_token, '')
-        return masked_text, tokenizer.tokenize(selection)[0]
+        if tokenizer.sep_token:
+            masked_text = re.sub('\s?' + re.escape(tokenizer.sep_token), '', masked_text)
+        return masked_text, ''.join(tokenizer.tokenize(selection))
 
     @staticmethod
-    def mask_wwm(tokenizer, text):
+    def mask_wwm(text, tokenizer):
         tokenized_text = tokenizer(text)
         encodings = tokenized_text.encodings[0]
         words = list(set(filter(lambda x: x is not None, encodings.words)))
         selection = ''
+        attempts = 0
         while len(selection) <= 2:
             word_choice = random.choice(words)
             tokens_to_mask = [token for (token, word_id) in zip(encodings.ids, encodings.word_ids) if
                               word_id == word_choice]
             selection = tokenizer.decode(tokens_to_mask)
+            attempts = attempts + 1
+            if attempts > 10:
+                break
         masked_text = tokenizer.decode(
             [token if word_id != word_choice else tokenizer.mask_token_id for (token, word_id) in
              zip(encodings.ids, encodings.word_ids)][1:-1])

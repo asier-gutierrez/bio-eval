@@ -1,3 +1,4 @@
+import os
 import argparse
 
 import transformers
@@ -11,18 +12,18 @@ def load_evaluation(
         args
 ):
     tokenizer = transformers.AutoTokenizer.from_pretrained(args.model, padding=True)
-    if type == bioeval.constants.general.ModelType.CLM:
+    if args.type == bioeval.constants.general.ModelType.CLM:
         model = transformers.AutoModelForCausalLM.from_pretrained(args.model)
         pipeline = transformers.TextGenerationPipeline(model, tokenizer, device=args.device)
         eval_cls = bioeval.snomed.evaluator.ModelEvaluatorCLM
         dataset_cls = bioeval.snomed.dataset.DatasetCLM
-    elif type == bioeval.constants.general.ModelType.MLM:
+    elif args.type == bioeval.constants.general.ModelType.MLM:
         model = transformers.AutoModelForMaskedLM.from_pretrained(args.model)
         pipeline = transformers.FillMaskPipeline(model, tokenizer, device=args.device)
-        eval_func = bioeval.snomed.evaluator.ModelEvaluatorMLM
+        eval_cls = bioeval.snomed.evaluator.ModelEvaluatorMLM
         dataset_cls = bioeval.snomed.dataset.DatasetMLM
     else:
-        raise NotImplementedError(f'{type} is not implemented yet.')
+        raise NotImplementedError(f'{args.type} is not implemented yet.')
 
     kwargs = {}
     if args.masking:
@@ -32,6 +33,9 @@ def load_evaluation(
                           tokenizer=tokenizer,
                           sampling=args.sampling,
                           **kwargs)
+    print("Prepare dataset...")
+    dataset.prepare_dataset()
+    print("Dataset prepared.")
 
     return tokenizer, model, pipeline, eval_cls, dataset
 
@@ -55,10 +59,18 @@ if __name__ == '__main__':
 
     tokenizer, model, pipeline, eval_cls, dataset = load_evaluation(args)
 
+    model_for_path = args.model.replace('/', '_')
+    if args.masking:
+        output_file = f'eval_{args.type}_{model_for_path}_{args.masking}_{args.sampling}.jsonl'
+    else:
+        output_file = f'eval_{args.type}_{model_for_path}_{args.sampling}.jsonl'
+    output_file = os.path.join(args.output_path, output_file)
+
     evaluator = eval_cls(model=model,
               tokenizer=tokenizer,
               pipeline=pipeline,
               dataset=dataset,
               device=args.device,
-              output_path=args.output_path)
+              output_file=output_file)
+    print(f"Evaluating model...")
     evaluator.evaluate()
