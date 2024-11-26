@@ -112,6 +112,7 @@ class ModelEvaluatorCLM:
             num_beams=2,
             max_new_tokens=len(expected_preds),
             return_dict_in_generate=True,
+            do_sample=False,
             output_scores=True
         )
         transition_scores = self.model.compute_transition_scores(

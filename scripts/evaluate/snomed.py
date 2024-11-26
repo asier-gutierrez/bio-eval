@@ -56,6 +56,7 @@ if __name__ == '__main__':
                         choices=list(bioeval.constants.general.MaskingStrategy),
                         required=False)
     args = parser.parse_args()
+    os.makedirs(args.output_path, exist_ok=True)
 
     tokenizer, model, pipeline, eval_cls, dataset = load_evaluation(args)
 
