@@ -109,7 +109,7 @@ class ModelEvaluatorCLM:
         outputs = self.model.generate(
             **inputs,
             force_words_ids=[expected_preds],
-            num_beams=5,
+            num_beams=2,
             max_new_tokens=len(expected_preds),
             return_dict_in_generate=True,
             output_scores=True
@@ -119,5 +119,5 @@ class ModelEvaluatorCLM:
             scores=outputs.scores,
             normalize_logits=True
         )
-        score = np.exp(transition_scores.to('cpu').numpy()).tolist()
-        return score
+        score = np.exp(transition_scores[0].to('cpu').numpy()).tolist()
+        return score[1:] # Skip the first score (from previous text to start_of_sequence)
