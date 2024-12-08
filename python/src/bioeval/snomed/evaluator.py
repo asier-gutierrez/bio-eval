@@ -27,10 +27,7 @@ class ModelEvaluatorMLM:
         self.output_file = output_file
 
     def evaluate(self):
-        if self.dataset.mask == bioeval.constants.general.MaskingStrategy.SWM:
-            eval_func = self.evaluate_mlm_swm
-        else:
-            eval_func = self.evaluate_mlm_wwm
+        eval_func = self.evaluate_mlm_wwm
         with open(self.output_file, 'w', encoding='utf-8') as f:
             for data in tqdm.tqdm(self.dataset.data):
                 d = copy.deepcopy(data)
@@ -39,31 +36,22 @@ class ModelEvaluatorMLM:
                 for generation in d['generations']:
                     texts_generated.append(generation['text_generated'])
                     masks.append(generation['mask'])
-                accuracies = eval_func(self.pipeline, texts_generated, masks)
-                for generation, accuracy in zip(d['generations'], accuracies):
-                    generation['accuracy'] = accuracy
+                scores = eval_func(self.model, texts_generated, masks)
+                for generation, score in zip(d['generations'], scores):
+                    generation['score'] = score
                 f.write(f"{json.dumps(d)}\n")
 
-    @staticmethod
-    def evaluate_mlm_swm(pipeline, texts, refs):
-        accuracies = []
-        for text, ref in zip(texts, refs):
-            preds = pipeline(text, targets=ref)
-            accuracies.extend([pred['score'] for pred in preds])
-        return accuracies
 
     @staticmethod
-    def evaluate_mlm_wwm(pipeline, texts, refs):
-        accuracies = []
+    def evaluate_mlm_wwm(model, texts, refs):
+        scores = []
         for text, ref in zip(texts, refs):
-            for _ref in ref:
-                preds = pipeline(text, targets=_ref, top_k=len(_ref))
-                for i in range(len(_ref)):
-                    if type(preds[i]) is dict:
-                        accuracies.extend([preds[i]['score']])
-                    else:
-                        accuracies.extend([preds[i][i]['score']])
-        return accuracies
+            start, end, mask = ref
+            token_score = model.token_score(text, PLL_metric='within_word_l2r')
+            token_score = token_score[0][start:end]
+            score = [ts[1] for ts in token_score]
+            scores.append(score)
+        return scores
 
 
 class ModelEvaluatorCLM:

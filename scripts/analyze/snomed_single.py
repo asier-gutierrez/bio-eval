@@ -39,7 +39,7 @@ def analyze_clm(input_file, output_path):
     print(all_scores)
 
     # To log10
-    df['score'] = df['score'].apply(np.log10)
+    df['score'] = df['score'].apply(np.log)
 
     group = {k: v['score'] for k, v in df.groupby('file')}
     group = collections.OrderedDict(sorted(group.items(), reverse=True))
@@ -51,7 +51,46 @@ def analyze_clm(input_file, output_path):
     plt.show()
 
 def analyze_mlm(input_file, output_path):
-    pass
+    # Gather the results form input file.
+    results = []
+
+    with open(input_file, 'r', encoding='utf-8') as f:
+        for line in f:
+            data = json.loads(line)
+            file = data['file']
+            file = file.replace('.csv', '').replace('output_corpus_', '').replace('_', ' ').title()
+            generations = data['generations']
+            for generation in generations:
+                score_pack = generation['score']
+                score = np.sum(score_pack)
+                results.append({
+                    'file': file,
+                    'score': np.exp(score)
+                })
+
+    # Create the DataFrame.
+    df = pd.DataFrame(results)
+
+    # Analysis
+    all_scores = {
+        'min': df['score'].min(),
+        'max': df['score'].max(),
+        'avg': df['score'].mean(),
+        'std': df['score'].std()
+    }
+    print(all_scores)
+
+    # To log
+    df['score'] = df['score'].apply(np.log)
+
+    group = {k: v['score'] for k, v in df.groupby('file')}
+    group = collections.OrderedDict(sorted(group.items(), reverse=True))
+
+    fig, ax = plt.subplots()
+    ax.boxplot(group.values(), vert=False)
+    ax.set_yticklabels(group.keys())
+    fig.tight_layout()
+    plt.show()
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

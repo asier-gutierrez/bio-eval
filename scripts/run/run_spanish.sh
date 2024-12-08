@@ -9,8 +9,7 @@ python scripts/evaluate/snomed.py \
     --snomed_path ./input/output_corpus_es.jsonl \
     --sampling 0.01 \
     --device mps \
-    --output_path ./output/es \
-    --masking SWM
+    --output_path ./output/es
 
 
 python scripts/evaluate/snomed.py \
@@ -19,8 +18,7 @@ python scripts/evaluate/snomed.py \
     --snomed_path ./input/output_corpus_es.jsonl \
     --sampling 0.01 \
     --device mps \
-    --output_path ./output/es \
-    --masking SWM
+    --output_path ./output/es
 
 
 python scripts/evaluate/snomed.py \
@@ -29,8 +27,7 @@ python scripts/evaluate/snomed.py \
     --snomed_path ./input/output_corpus_es.jsonl \
     --sampling 0.01 \
     --device mps \
-    --output_path ./output/es \
-    --masking SWM
+    --output_path ./output/es
 
 
 

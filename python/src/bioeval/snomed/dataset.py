@@ -7,6 +7,8 @@ import random
 import functools
 import collections
 
+import nltk.corpus
+
 import bioeval.constants.general
 
 
@@ -56,6 +58,7 @@ class DatasetCLM:
             snomed_path: str,
             tokenizer: str,
             sampling: float,
+            language: str,
             **kwargs
     ):
 
@@ -104,29 +107,31 @@ class DatasetMLM:
             snomed_path: str,
             tokenizer: str,
             sampling: float,
+            language: str,
             **kwargs
     ):
 
         self.snomed_path = snomed_path
         self.tokenizer = tokenizer
         self.sampling = sampling
-        if kwargs and 'masking' in kwargs:
-            self.mask = kwargs['masking']
-        else:
-            self.mask = bioeval.constants.general.MaskingStrategy.SWM
+        self.language = language
+        self.stop_words = nltk.corpus.stopwords.words(self.language)
 
         self.data = load_dataset(
             snomed_path=snomed_path,
             sampling=sampling)
 
     def prepare_dataset(self):
-        if self.mask == bioeval.constants.general.MaskingStrategy.SWM:
-            self.mask_func = functools.partial(self.mask_swm, tokenizer=self.tokenizer)
-        else:
-            self.mask_func = functools.partial(self.mask_wwm, tokenizer=self.tokenizer)
+        self.mask_func = functools.partial(
+            self.mask_wwm,
+            tokenizer=self.tokenizer,
+            stop_words=self.stop_words)
 
         for chunk in self.data:
-            texts_generated, masks = DatasetMLM.conform_filling(chunk, mask_func=self.mask_func)
+            texts_generated, masks = DatasetMLM.conform_filling(
+                chunk,
+                mask_func=self.mask_func,
+                tokenizer=self.tokenizer)
             chunk['generations'] = []
             for text_generated, mask in zip(texts_generated, masks):
                 generation = {
@@ -144,7 +149,7 @@ class DatasetMLM:
         return texts_masks.keys(), texts_masks.values()
 
     @staticmethod
-    def conform_filling(chunk, mask_func):
+    def conform_filling(chunk, mask_func, tokenizer):
         names = chunk['b_concepts']
         relationship = chunk['relation']
         subjects = chunk['a_concepts']
@@ -178,16 +183,18 @@ class DatasetMLM:
         texts_generated, masks, _texts_generated, _masks = (), (), (), ()
         if len(names_masked):
             texts_generated, masks = zip(
-                *DatasetMLM.generate_texts(None, names_masked, relationship, subjects, masks_names, how='left'))
+                *DatasetMLM.generate_texts(None, names_masked, relationship, subjects,
+                                           masks_names, how='left', tokenizer=tokenizer))
         if len(subjects_masked):
             _texts_generated, _masks = zip(
-                *DatasetMLM.generate_texts(None, names, relationship, subjects_masked, masks_subjects, how='right'))
+                *DatasetMLM.generate_texts(None, names, relationship, subjects_masked,
+                                           masks_subjects, how='right', tokenizer=tokenizer))
         texts_generated = texts_generated + _texts_generated
         masks = masks + _masks
         return texts_generated, masks
 
     @staticmethod
-    def generate_texts(starting_text, part_a, relationship, part_b, masks, how):
+    def generate_texts(starting_text, part_a, relationship, part_b, masks, how, tokenizer):
         if starting_text:
             starting_text = starting_text + " "
         else:
@@ -197,57 +204,50 @@ class DatasetMLM:
         if how == 'left':
             for element, _mask in zip(part_a, masks):
                 for pb in part_b:
-                    texts_generated.append((f'{starting_text}{element} {relationship} {pb}.', _mask))
+                    text_generated = f'{starting_text}{element} {relationship} {pb}.'
+                    tokens = tokenizer.encode(text_generated)
+                    mask_idx = tokens.index(tokenizer.mask_token_id)
+                    start = len(tokenizer.encode(tokenizer.decode(tokens[:mask_idx], skip_special_tokens=True), add_special_tokens=False))
+                    end = start + len(tokenizer.encode(_mask[0], add_special_tokens=False))
+                    tokens = tokens[:mask_idx] + tokenizer.encode(_mask[0], add_special_tokens=False) + tokens[mask_idx+1:]
+                    text_generated = tokenizer.decode(tokens, skip_special_tokens=True)
+                    texts_generated.append((text_generated, (start, end, _mask[0])))
         elif how == 'right':
             for element, _mask in zip(part_b, masks):
                 for pa in part_a:
-                    texts_generated.append((f'{starting_text}{pa} {relationship} {element}.', _mask))
+                    text_generated = f'{starting_text}{pa} {relationship} {element}.'
+                    tokens = tokenizer.encode(text_generated)
+                    mask_idx = tokens.index(tokenizer.mask_token_id)
+                    start = len(tokenizer.encode(tokenizer.decode(tokens[:mask_idx], skip_special_tokens=True), add_special_tokens=False))
+                    end = start + len(tokenizer.encode(_mask[0], add_special_tokens=False))
+                    tokens = tokens[:mask_idx] + tokenizer.encode(_mask[0], add_special_tokens=False) + tokens[mask_idx+1:]
+                    text_generated = tokenizer.decode(tokens, skip_special_tokens=True)
+                    texts_generated.append((text_generated, (start, end, _mask[0])))
         return texts_generated
 
     @staticmethod
-    def mask_swm(text, tokenizer):
-        tokenized_text = tokenizer.encode(text)
-        selection = ''
-        attempts = 0
-        choice = -1
-        while len(selection.replace('##', '')) <= 2:
-            choice = random.choice(range(len(tokenized_text) - 2))  # start and end
-            token_to_mask = tokenized_text[choice + 1]
-            selection = tokenizer.decode(token_to_mask, skip_special_tokens=True)
-            attempts = attempts + 1
-            if attempts > 10:
-                return None, None
-        tokenized_text[choice + 1] = tokenizer.mask_token_id
-        masked_text = tokenizer.decode(tokenized_text)
-        if tokenizer.bos_token:
-            masked_text = masked_text.replace(tokenizer.bos_token + ' ', '')
-        if tokenizer.eos_token:
-            masked_text = masked_text.replace(tokenizer.eos_token, '')
-        if tokenizer.sep_token:
-            masked_text = re.sub('\s?' + re.escape(tokenizer.sep_token), '', masked_text)
-        if tokenizer.cls_token:
-            masked_text = re.sub('\s?' + re.escape(tokenizer.cls_token), '', masked_text)
-        masked_text = re.sub('  +', ' ', masked_text)
-        return masked_text, selection
-
-
-    @staticmethod
-    def mask_wwm(text, tokenizer):
+    def mask_wwm(text, tokenizer, stop_words):
         tokenized_text = tokenizer(text)
         encodings = tokenized_text.encodings[0]
         words = list(set(filter(lambda x: x is not None, encodings.words)))
         selection = ''
         attempts = 0
-        while len(selection) <= 2:
+        while (len(selection) <= 2) or (selection in stop_words):
             word_choice = random.choice(words)
             tokens_to_mask = [token for (token, word_id) in zip(encodings.ids, encodings.word_ids) if
                               word_id == word_choice]
             selection = tokenizer.decode(tokens_to_mask)
             attempts = attempts + 1
             if attempts > 10:
-                break
-        masked_text = tokenizer.decode(
-            [token if word_id != word_choice else tokenizer.mask_token_id for (token, word_id) in
-             zip(encodings.ids, encodings.word_ids)][1:-1])
+                return None, None
+        word_start = True
+        new_tokens = []
+        for token, word_id in zip(encodings.ids, encodings.word_ids):
+            if word_id != word_choice:
+                new_tokens.append(token)
+            elif word_start:
+                new_tokens.append(tokenizer.mask_token_id)
+                word_start = False
+        masked_text = tokenizer.decode(new_tokens[1:-1])
         masked_text = masked_text if masked_text[0] != ' ' else masked_text[1:]
-        return masked_text, tokenizer.tokenize(tokenizer.decode(tokens_to_mask))
+        return masked_text, tokenizer.decode(tokens_to_mask)

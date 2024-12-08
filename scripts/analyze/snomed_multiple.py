@@ -5,31 +5,50 @@ import collections
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import seaborn as sns
+import statsmodels.stats.multicomp
 
 import bioeval.constants.general
 
 
+def report_statistics(df):
+    group_scores = []
+    group_names = []
+    for group_name, group_df in df.groupby('model_name'):
+        scores = group_df['score']
+        group_scores.append(scores)
+        group_names.append(group_name)
+        mean1, median1 = np.mean(scores), np.median(scores)
+
+        print(f"Group {group_name}: Mean = {mean1}, Median = {median1}")
+
+    data = np.concatenate(group_scores)
+    groups = []
+    for gn, gs in zip(group_names, group_scores):
+        groups.extend([gn] * len(gs))
+    # Perform Tukey's HSD
+    tukey = statsmodels.stats.multicomp.pairwise_tukeyhsd(data, groups, alpha=0.05)
+    print(tukey)
+
 def analyze_clm(input_files, model_names, output_path):
-    model_score_dict = {}
+    results = []
     for input_file, model_name in zip(input_files, model_names):
         # Gather the results form input file.
-        results = []
 
         with open(input_file, 'r', encoding='utf-8') as f:
             for line in f:
                 data = json.loads(line)
-                file = data['file']
-                file = file.replace('.csv', '').replace('output_corpus_', '').replace('_', ' ').title()
                 scores = data['scores']
                 for score_pack in scores:
                     score = np.prod(score_pack)
                     results.append({
-                        'file': file,
+                        'model_name': model_name,
                         'score': score
                     })
 
         # Create the DataFrame.
         df = pd.DataFrame(results)
+        df = df[df['model_name'] == model_name]
 
         # Analysis
         all_scores = {
@@ -40,21 +59,93 @@ def analyze_clm(input_files, model_names, output_path):
         }
         print(model_name, all_scores)
 
-        # To log10
-        df['score'] = df['score'].apply(np.log10)
-        model_score_dict[model_name] = df['score']
+    df = pd.DataFrame(results)
+    sns.set_theme(style="ticks")
 
-    model_score_dict = collections.OrderedDict(
-        sorted(model_score_dict.items(), reverse=True))
+    # Initialize the figure with a logarithmic x axis
+    f, ax = plt.subplots(figsize=(7, 6))
+    ax.set_xscale("log")
 
-    fig, ax = plt.subplots()
-    ax.boxplot(model_score_dict.values(), vert=False)
-    ax.set_yticklabels(model_score_dict.keys())
-    fig.tight_layout()
+    # Plot the orbital period with horizontal boxes
+    """
+    sns.boxplot(
+        df, x='score', y='model_name', hue='model_name',
+        whis=[0, 100], width=.6, palette="vlag"
+    )
+    """
+    sns.violinplot(
+        df, x='score', y='model_name', hue='model_name', width=.6, palette='husl'
+    )
+
+    # Add in points to show each observation
+    #sns.stripplot(df, x='score', y='model_name', size=4, color=".3")
+
+    # Tweak the visual presentation
+    ax.xaxis.grid(True)
+    ax.set(ylabel="")
+    sns.despine(trim=True, left=True)
+    f.tight_layout()
     plt.show()
+    report_statistics(df)
 
 def analyze_mlm(input_files, model_names, output_path):
-    pass
+    results = []
+    for input_file, model_name in zip(input_files, model_names):
+        # Gather the results form input file.
+
+        with open(input_file, 'r', encoding='utf-8') as f:
+            for line in f:
+                data = json.loads(line)
+                generations = data['generations']
+                for generation in generations:
+                    score_pack = generation['score']
+                    score = np.sum(score_pack)
+                    results.append({
+                        'model_name': model_name,
+                        'score': np.exp(score)
+                    })
+
+        # Create the DataFrame.
+        df = pd.DataFrame(results)
+        df = df[df['model_name'] == model_name]
+
+        # Analysis
+        all_scores = {
+            'min': df['score'].min(),
+            'max': df['score'].max(),
+            'avg': df['score'].mean(),
+            'std': df['score'].std()
+        }
+        print(model_name, all_scores)
+
+    df = pd.DataFrame(results)
+    sns.set_theme(style="ticks")
+
+    # Initialize the figure with a logarithmic x axis
+    f, ax = plt.subplots(figsize=(7, 6))
+    ax.set_xscale("log")
+
+    # Plot the orbital period with horizontal boxes
+    """
+    sns.boxplot(
+        df, x='score', y='model_name', hue='model_name',
+        whis=[0, 100], width=.6, palette="vlag"
+    )
+    """
+    sns.violinplot(
+        df, x='score', y='model_name', hue='model_name', width=.6, palette='husl'
+    )
+
+    # Add in points to show each observation
+    #sns.stripplot(df, x='score', y='model_name', size=4, color=".3")
+
+    # Tweak the visual presentation
+    ax.xaxis.grid(True)
+    ax.set(ylabel="")
+    sns.despine(trim=True, left=True)
+    f.tight_layout()
+    plt.show()
+    report_statistics(df)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

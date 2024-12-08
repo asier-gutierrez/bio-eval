@@ -2,6 +2,7 @@ import os
 import argparse
 
 import transformers
+import minicons.scorer
 
 import bioeval.snomed.dataset
 import bioeval.snomed.evaluator
@@ -18,21 +19,17 @@ def load_evaluation(
         eval_cls = bioeval.snomed.evaluator.ModelEvaluatorCLM
         dataset_cls = bioeval.snomed.dataset.DatasetCLM
     elif args.type == bioeval.constants.general.ModelType.MLM:
-        model = transformers.AutoModelForMaskedLM.from_pretrained(args.model)
-        pipeline = transformers.FillMaskPipeline(model, tokenizer, device=args.device)
+        model = minicons.scorer.MaskedLMScorer(args.model, device=args.device)
+        pipeline = None
         eval_cls = bioeval.snomed.evaluator.ModelEvaluatorMLM
         dataset_cls = bioeval.snomed.dataset.DatasetMLM
     else:
         raise NotImplementedError(f'{args.type} is not implemented yet.')
 
-    kwargs = {}
-    if args.masking:
-        kwargs['masking'] = args.masking
-
     dataset = dataset_cls(snomed_path=args.snomed_path,
                           tokenizer=tokenizer,
                           sampling=args.sampling,
-                          **kwargs)
+                          language=args.language)
     print("Prepare dataset...")
     dataset.prepare_dataset()
     print("Dataset prepared.")
@@ -51,20 +48,18 @@ if __name__ == '__main__':
     parser.add_argument('--sampling', type=float, default=0.1)
     parser.add_argument('--device', type=str, required=True)
     parser.add_argument('--output_path', type=str, required=True)
-    parser.add_argument('--masking',
-                        type=bioeval.constants.general.MaskingStrategy,
-                        choices=list(bioeval.constants.general.MaskingStrategy),
-                        required=False)
+    parser.add_argument('--language', required=False)
     args = parser.parse_args()
     os.makedirs(args.output_path, exist_ok=True)
+    if ((args.type == bioeval.constants.general.ModelType.MLM)
+        and ('language' not in args)
+        and (args.language is not None)):
+        raise ValueError('--language flag is required for MLM models.')
 
     tokenizer, model, pipeline, eval_cls, dataset = load_evaluation(args)
 
     model_for_path = args.model.replace('/', '_')
-    if args.masking:
-        output_file = f'eval_{args.type}_{model_for_path}_{args.masking}_{args.sampling}.jsonl'
-    else:
-        output_file = f'eval_{args.type}_{model_for_path}_{args.sampling}.jsonl'
+    output_file = f'eval_{args.type}_{model_for_path}_{args.sampling}.jsonl'
     output_file = os.path.join(args.output_path, output_file)
 
     evaluator = eval_cls(model=model,
