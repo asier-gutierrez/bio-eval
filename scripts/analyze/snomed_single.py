@@ -1,6 +1,7 @@
 import argparse
 import json
 import collections
+import os
 
 import numpy as np
 import pandas as pd
@@ -48,7 +49,9 @@ def analyze_clm(input_file, output_path):
     ax.boxplot(group.values(), vert=False)
     ax.set_yticklabels(group.keys())
     fig.tight_layout()
-    plt.show()
+    ax.set_xlabel('Score (log)')
+    #plt.show()
+    plt.savefig(os.path.join(output_path, f"single.pdf"), dpi=300)
 
 def analyze_mlm(input_file, output_path):
     # Gather the results form input file.
@@ -89,8 +92,10 @@ def analyze_mlm(input_file, output_path):
     fig, ax = plt.subplots()
     ax.boxplot(group.values(), vert=False)
     ax.set_yticklabels(group.keys())
+    ax.set_xlabel('Score (log)')
     fig.tight_layout()
-    plt.show()
+    #plt.show()
+    plt.savefig(os.path.join(output_path, f"single.pdf"), dpi=300)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -101,6 +106,7 @@ if __name__ == "__main__":
                         required=True)
     parser.add_argument('--output_path', type=str, required=True)
     args = parser.parse_args()
+    os.makedirs(args.output_path, exist_ok=True)
 
     if args.type == bioeval.constants.general.ModelType.CLM:
         analyze_clm(args.input_file, args.output_path)
