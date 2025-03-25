@@ -9,11 +9,20 @@ import numpy as np
 import scipy.stats
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib
 import seaborn as sns
 import statsmodels.stats.multicomp
 import statsmodels.stats.multitest
 
 import bioeval.constants.general
+
+#mpl.rcParams['text.usetex'] = True
+#mpl.rcParams['font.family'] = 'serif'
+#mpl.rcParams['font.serif']=['CMU Sans Serif']
+
+plt.rc('font', family='serif')
+matplotlib.rc('text', usetex=True)
+matplotlib.rcParams['text.latex.preamble'] = r'\boldmath'
 
 
 def report_statistics(df):
@@ -67,7 +76,7 @@ def report_statistics(df):
     adjusted_p = statsmodels.stats.multitest.multipletests(p_values, method='bonferroni')[1]
 
     for comb, (i, p) in zip(combs, enumerate(adjusted_p)):
-        if p_value < 0.05:
+        if p < 0.05:
             txt = "There is a significant difference."
         else:
             txt = "No significant difference."
@@ -96,20 +105,21 @@ def analyze_clm(input_files, model_names, output_path):
 
         # Analysis
         all_scores = {
-            'min': df['score'].min(),
-            'max': df['score'].max(),
-            'avg': df['score'].mean(),
-            'std': df['score'].std()
+            'min': np.log(df['score'].min()),
+            'max': np.log(df['score'].max()),
+            'avg': np.log(df['score'].mean()),
+            'median': np.log(df['score'].median()),
+            'std': np.log(df['score'].std())
         }
-        logger.info(model_name, all_scores)
+        logger.info(model_name + '\t' + str(all_scores))
 
     df = pd.DataFrame(results)
     report_statistics(df)
-    df['model_name'] = df['model_name'].apply(lambda x: x.replace('/', '\n'))
+    df['model_name'] = df['model_name'].apply(lambda x: x.replace('/', '\n').replace('instruct', 'it'))
     sns.set_theme(style="ticks")
 
     # Initialize the figure with a logarithmic x axis
-    f, ax = plt.subplots(figsize=(7, 6))
+    f, ax = plt.subplots(figsize=(4, 3))
     ax.set_xscale("log")
 
     # Plot the orbital period with horizontal boxes
@@ -155,20 +165,21 @@ def analyze_mlm(input_files, model_names, output_path):
 
         # Analysis
         all_scores = {
-            'min': df['score'].min(),
-            'max': df['score'].max(),
-            'avg': df['score'].mean(),
-            'std': df['score'].std()
+            'min': np.log(df['score'].min()),
+            'max': np.log(df['score'].max()),
+            'avg': np.log(df['score'].mean()),
+            'median': np.log(df['score'].median()),
+            'std': np.log(df['score'].std())
         }
-        logger.info(model_name, all_scores)
+        logger.info(model_name + '\t' + str(all_scores))
 
     df = pd.DataFrame(results)
     report_statistics(df)
-    df['model_name'] = df['model_name'].apply(lambda x: x.replace('/', '\n'))
+    df['model_name'] = df['model_name'].apply(lambda x: x.replace('/', '\n').replace('multilingual', 'mul.').replace('cased', 'cas.'))
     sns.set_theme(style="ticks")
 
     # Initialize the figure with a logarithmic x axis
-    f, ax = plt.subplots(figsize=(7, 6))
+    f, ax = plt.subplots(figsize=(4, 3))
     ax.set_xscale("log")
 
     # Plot the orbital period with horizontal boxes

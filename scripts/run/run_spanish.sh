@@ -33,7 +33,7 @@ python scripts/evaluate/snomed.py \
 
 # Generative models
 python scripts/evaluate/snomed.py \
-    --model meta-llama/Llama-3.2-3B \
+    --model meta-llama/Llama-3.2-3B-Instruct \
     --type CLM \
     --snomed_path ./input/output_corpus_es.jsonl \
     --sampling 0.01 \

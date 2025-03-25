@@ -6,8 +6,14 @@ import os
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib
 
 import bioeval.constants.general
+
+
+plt.rc('font', family='serif')
+matplotlib.rc('text', usetex=True)
+matplotlib.rcParams['text.latex.preamble'] = r'\boldmath'
 
 
 def analyze_clm(input_file, output_path):
@@ -45,11 +51,12 @@ def analyze_clm(input_file, output_path):
     group = {k: v['score'] for k, v in df.groupby('file')}
     group = collections.OrderedDict(sorted(group.items(), reverse=True))
 
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(6.4, 5))
     ax.boxplot(group.values(), vert=False)
     ax.set_yticklabels(group.keys())
-    fig.tight_layout()
+    ax.set_xticks(list(reversed([-n for n in range(0, 700, 100)])))
     ax.set_xlabel('Score (log)')
+    fig.tight_layout()
     #plt.show()
     plt.savefig(os.path.join(output_path, f"single.pdf"), dpi=300)
 
@@ -89,7 +96,7 @@ def analyze_mlm(input_file, output_path):
     group = {k: v['score'] for k, v in df.groupby('file')}
     group = collections.OrderedDict(sorted(group.items(), reverse=True))
 
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(6.4, 5))
     ax.boxplot(group.values(), vert=False)
     ax.set_yticklabels(group.keys())
     ax.set_xlabel('Score (log)')

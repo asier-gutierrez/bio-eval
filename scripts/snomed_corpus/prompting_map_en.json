@@ -1,0 +1,616 @@
+{
+  "FINDINGS": {
+    "ISA": {
+      "middle": "is a kind of"
+    },
+    "FINDING_SITE": {
+      "middle": "affects the"
+    },
+    "HAS_DEFINITIONAL_MANIFESTATION": {
+      "middle": "manifests itself in"
+    },
+    "ASSOCIATED_MORPHOLOGY": {
+        "middle": "has as associated morphology"
+    },
+    "PATHOLOGICAL_PROCESS": {
+      "middle": "has as associated pathological process"
+    },
+    "CAUSATIVE_AGENT": {
+      "middle": "is caused by"
+    },
+    "DUE_TO": {
+      "middle": "occurs due to"
+    },
+    "ASSOCIATED_WITH": {
+      "middle": "is also associated with"
+    },
+    "OCCURRENCE": {
+      "middle": "presents in"
+    },
+    "DURING": {
+      "middle": "can occur during"
+    },
+    "TEMPORALLY_FOLLOWS": {
+      "middle": "can occur following"
+    },
+    "AFTER": {
+      "middle": "can occur after"
+    },
+    "TEMPORALLY_RELATED_TO": {
+      "middle": "can be temporarily related to"
+    },
+    "FINDING_INFORMER": {
+      "middle": "is discovered by"
+    },
+    "FINDING_METHOD": {
+      "middle": "is discovered through"
+    },
+    "CLINICAL_COURSE": {
+      "middle": "has as clinical course"
+    },
+    "SEVERITY": {
+      "middle": "has a severity"
+    },
+    "EPISODICITY": {
+      "middle": "has a episodicity of"
+    },
+    "INTERPRETS": {
+      "middle": "interprets or evaluates"
+    }
+  },
+
+  "DISORDER": {
+    "ISA": {
+      "middle": "is a kind of"
+    },
+    "FINDING_SITE": {
+      "middle": "affects the"
+    },
+    "HAS_DEFINITIONAL_MANIFESTATION": {
+      "middle": "manifests itself in"
+    },
+    "ASSOCIATED_MORPHOLOGY": {
+        "middle": "has as associated morphology"
+    },
+    "PATHOLOGICAL_PROCESS": {
+      "middle": "has as associated pathological process"
+    },
+    "CAUSATIVE_AGENT": {
+      "middle": "is caused by"
+    },
+    "DUE_TO": {
+      "middle": "occurs due to"
+    },
+    "ASSOCIATED_WITH": {
+      "middle": "is also associated with"
+    },
+    "OCCURRENCE": {
+      "middle": "presents in"
+    },
+    "DURING": {
+      "middle": "can occur during"
+    },
+    "TEMPORALLY_FOLLOWS": {
+      "middle": "can occur following"
+    },
+    "AFTER": {
+      "middle": "can occur after"
+    },
+    "TEMPORALLY_RELATED_TO": {
+      "middle": "can be temporarily related to"
+    },
+    "FINDING_INFORMER": {
+      "middle": "is discovered by"
+    },
+    "FINDING_METHOD": {
+      "middle": "is discovered through"
+    },
+    "CLINICAL_COURSE": {
+      "middle": "has as clinical course"
+    },
+    "SEVERITY": {
+      "middle": "has a severity"
+    },
+    "EPISODICITY": {
+      "middle": "has a episodicity of"
+    },
+    "INTERPRETS": {
+      "middle": "interprets or evaluates"
+    }
+  },
+
+  "PROCEDURE": {
+    "ISA": {
+      "middle": "is a kind of"
+    },
+    "PROCEDURE_SITE": {
+      "middle": "is a procedure performed in"
+    },
+    "PROCEDURE_SITE__DIRECT": {
+      "middle": "is a procedure directly performed in"
+    },
+    "PROCEDURE_SITE__INDIRECT": {
+      "middle": "is a procedure indirectly performed in"
+    },
+    "DIRECT_MORPHOLOGY": {
+      "middle": "is a procedure with an associated direct morphology of"
+    },
+    "INDIRECT_MORPHOLOGY": {
+      "middle": "is a procedure with an associated indirect morphology of"
+    },
+    "PROCEDURE_MORPHOLOGY": {
+      "middle": "is a procedure with an associated morphology of"
+    },
+    "HAS_FOCUS": {
+      "middle": "has focus"
+    },
+    "HAS_INTENT": {
+      "middle": "has as purpose"
+    },
+    "ROUTE_OF_ADMINISTRATION": {
+      "middle": "has as route of administration"
+    },
+    "METHOD": {
+      "middle": "uses the method"
+    },
+    "ACCESS": {
+      "middle": "uses the access"
+    },
+    "USING_DEVICE": {
+      "middle": "use device"
+    },
+    "PROCEDURE_DEVICE": {
+      "middle": "use device"
+    },
+    "USING_ACCESS_DEVICE": {
+      "middle": "use as access device"
+    },
+    "DIRECT_DEVICE": {
+      "middle": "use device"
+    },
+    "INDIRECT_DEVICE": {
+      "middle": "use device"
+    },
+    "DIRECT_SUBSTANCE": {
+      "middle": "has as subject substance"
+    },
+    "USING_SUBSTANCE": {
+      "middle": "use substance"
+    },
+    "PRIORITY": {
+      "middle": "has priority"
+    },
+    "COMPONENT": {
+      "middle": "has among its components"
+    },
+    "HAS_SPECIMEN": {
+      "middle": "is performed on the specimen"
+    },
+    "MEASUREMENT_METHOD": {
+      "middle": "has as its method of measurement"
+    },
+    "PROPERTY": {
+      "middle": "has among its properties"
+    },
+    "RECIPIENT_CATEGORY": {
+      "middle": "has among its recipients the category of"
+    },
+    "REVISION_STATUS": {
+      "middle": "has as revision value"
+    },
+    "SCALE_TYPE": {
+      "middle": "has a type of scale"
+    },
+    "SURGICAL_APPROACH": {
+      "middle": "has a surgical approach"
+    },
+    "TIME_ASPECT": {
+      "middle": "has the temporal aspect of"
+    },
+    "USING_ENERGY": {
+      "middle": "use as energy source"
+    }
+  },
+
+  "REGIME_THERAPY": {
+    "ISA": {
+      "middle": "is a kind of"
+    },
+    "PROCEDURE_SITE": {
+      "middle": "is a procedure performed in"
+    },
+    "PROCEDURE_SITE__DIRECT": {
+      "middle": "is a procedure directly performed in"
+    },
+    "PROCEDURE_SITE__INDIRECT": {
+      "middle": "is a procedure indirectly performed in"
+    },
+    "DIRECT_MORPHOLOGY": {
+      "middle": "is a procedure with an associated direct morphology of"
+    },
+    "INDIRECT_MORPHOLOGY": {
+      "middle": "is a procedure with an associated indirect morphology of"
+    },
+    "PROCEDURE_MORPHOLOGY": {
+      "middle": "is a procedure with an associated morphology of"
+    },
+    "HAS_FOCUS": {
+      "middle": "has focus"
+    },
+    "HAS_INTENT": {
+      "middle": "has as purpose"
+    },
+    "ROUTE_OF_ADMINISTRATION": {
+      "middle": "has as route of administration"
+    },
+    "METHOD": {
+      "middle": "uses the method"
+    },
+    "ACCESS": {
+      "middle": "uses the access"
+    },
+    "USING_DEVICE": {
+      "middle": "use device"
+    },
+    "PROCEDURE_DEVICE": {
+      "middle": "use device"
+    },
+    "USING_ACCESS_DEVICE": {
+      "middle": "use as access device"
+    },
+    "DIRECT_DEVICE": {
+      "middle": "use device"
+    },
+    "INDIRECT_DEVICE": {
+      "middle": "use device"
+    },
+    "DIRECT_SUBSTANCE": {
+      "middle": "has as subject substance"
+    },
+    "USING_SUBSTANCE": {
+      "middle": "use substance"
+    },
+    "PRIORITY": {
+      "middle": "has priority"
+    },
+    "COMPONENT": {
+      "middle": "has among its components"
+    },
+    "HAS_SPECIMEN": {
+      "middle": "is performed on the specimen"
+    },
+    "MEASUREMENT_METHOD": {
+      "middle": "has as its method of measurement"
+    },
+    "PROPERTY": {
+      "middle": "has among its properties"
+    },
+    "RECIPIENT_CATEGORY": {
+      "middle": "has among its recipients the category of"
+    },
+    "REVISION_STATUS": {
+      "middle": "has as revision value"
+    },
+    "SCALE_TYPE": {
+      "middle": "has a type of scale"
+    },
+    "SURGICAL_APPROACH": {
+      "middle": "has a surgical approach"
+    },
+    "TIME_ASPECT": {
+      "middle": "has the temporal aspect of"
+    },
+    "USING_ENERGY": {
+      "middle": "use as energy source"
+    }
+  },
+
+  "SITUATION": {
+    "ISA": {
+      "middle": "is a kind of"
+    },
+    "ASSOCIATED_FINDING": {
+      "middle": "is associated with the clinical finding of"
+    },
+    "ASSOCIATED_PROCEDURE": {
+      "middle": "is associated with the procedure of"
+    },
+    "FINDING_CONTEXT": {
+      "middle": "occurs in the context of a clinical finding of"
+    },
+    "FINDING_METHOD": {
+      "middle": "has as a method of clinical finding"
+    },
+    "INTERPRETS": {
+      "middle": "is interpreted as"
+    },
+    "PROCEDURE_CONTEXT": {
+      "middle": "occurs in the context of the procedure"
+    },
+    "SUBJECT_RELATIONSHIP_CONTEXT": {
+      "middle": "has as its subject"
+    },
+    "TEMPORAL_CONTEXT": {
+      "middle": "occurs in the temporal context of"
+    }
+  },
+
+  "OBSERVABLE_ENTITY": {
+    "ISA": {
+      "middle": "is a kind of"
+    },
+    "CHARACTERIZES": {
+      "middle": "characterizes"
+    },
+    "COMPONENT": {
+      "middle": "has as its component"
+    },
+    "DIRECT_SITE": {
+      "middle": "is performed on"
+    },
+    "FINDING_SITE": {
+      "middle": "has as a place of finding"
+    },
+    "HAS_INTERPRETATION": {
+      "middle": "has as interpretation"
+    },
+    "INHERENT_LOCATION": {
+      "middle": "tiene como lugar inherente"
+    },
+    "INHERES_IN": {
+      "middle": "es inherente a"
+    },
+    "INTERPRETS": {
+      "middle": "is interpreted as"
+    },
+    "PRECONDITION": {
+      "middle": "has as a precondition"
+    },
+    "PROCESS_ACTS_ON": {
+      "middle": "acts on"
+    },
+    "PROCESS_DURATION": {
+      "middle": "has a duration of"
+    },
+    "PROCESS_EXTENDS_TO": {
+      "middle": "extends as process to"
+    },
+    "PROPERTY": {
+      "middle": "has among its properties"
+    },
+    "SCALE_TYPE": {
+      "middle": "has a type of scale"
+    },
+    "TECHNIQUE": {
+      "middle": "emplea la técnica"
+    },
+    "TIME_ASPECT": {
+      "middle": "has the temporal aspect of"
+    },
+    "USING_DEVICE": {
+      "middle": "use the device"
+    }
+  },
+
+  "BODY_STRUCTURE": {
+    "ISA": {
+      "middle": "is a kind of"
+    },
+    "LATERALITY": {
+      "middle": "has a laterality"
+    }
+  },
+
+  "MORPHOLOGIC_ABNORMALITY": {
+    "ISA": {
+      "middle": "is a kind of"
+    },
+    "LATERALITY": {
+      "middle": "has a laterality"
+    }
+  },
+
+  "ORGANISM": {
+    "ISA": {
+      "middle": "is a kind of"
+    }
+  },
+
+  "SUBSTANCE": {
+    "ISA": {
+      "middle": "is a kind of"
+    },
+    "HAS_DISPOSITION": {
+      "middle": "has a disposition"
+    },
+    "IS_MODIFICATION_OF": {
+      "middle": "is a modification of"
+    }
+  },
+
+  "PHARMACEUTICAL_BIOLOGIC_PRODUCT": {
+    "ISA": {
+      "middle": "is a kind of"
+    },
+    "HAS_ACTIVE_INGREDIENT": {
+      "middle": "has as its active ingredient"
+    },
+    "HAS_DEVICE_INTENDED_SITE": {
+      "middle": "has a device intended site"
+    },
+    "HAS_MANUFACTURED_DOSE_FORM": {
+      "middle": "has a manufactured dose form"
+    },
+    "PLAYS_ROLE": {
+      "middle": "plays the role"
+    }
+  },
+
+  "CLINICAL_DRUG": {
+    "ISA": {
+      "middle": "is a kind of"
+    },
+    "HAS_ACTIVE_INGREDIENT": {
+      "middle": "has as its active ingredient"
+    },
+    "HAS_DEVICE_INTENDED_SITE": {
+      "middle": "has a device intended site"
+    },
+    "HAS_MANUFACTURED_DOSE_FORM": {
+      "middle": "has a manufactured dose form"
+    },
+    "PLAYS_ROLE": {
+      "middle": "plays the role"
+    }
+  },
+
+  "SPECIMEN": {
+    "ISA": {
+      "middle": "is a kind of"
+    },
+    "SPECIMEN_PROCEDURE": {
+      "middle": "has as its procedure on the specimen"
+    },
+    "SPECIMEN_SOURCE_IDENTITY": {
+      "middle": "tiene cmo fuente del especimen"
+    },
+    "SPECIMEN_SOURCE_MORPHOLOGY": {
+      "middle": "has as source morphology"
+    },
+    "SPECIMEN_SOURCE_TOPOGRAPHY": {
+      "middle": "has as source topography"
+    },
+    "SPECIMEN_SUBSTANCE": {
+      "middle": "has as specimen substance"
+    }
+  },
+
+  "SPECIAL_CONCEPT": {
+    "ISA": {
+      "middle": "is a kind of"
+    }
+  },
+
+  "PHYSICAL_OBJECT": {
+    "ISA": {
+      "middle": "is a kind of"
+    },
+    "HAS_ABSORBABILITY": {
+      "middle": "from the absorbability point of view is"
+    },
+    "HAS_COATING_MATERIAL": {
+      "middle": "has as coating material"
+    },
+    "HAS_COMPOSITIONAL_MATERIAL": {
+      "middle": "has as compositional material"
+    },
+    "HAS_DEVICE_INTENDED_SITE": {
+      "middle": "has a device intended site"
+    },
+    "HAS_FILLING": {
+      "middle": "has filling"
+    },
+    "HAS_SURFACE_TEXTURE": {
+      "middle": "has a texture on its surface of"
+    },
+    "IS_STERILE": {
+      "middle": "is sterile"
+    }
+  },
+
+  "PHYSICAL_FORCE": {
+    "ISA": {
+      "middle": "is a kind of"
+    }
+  },
+
+  "EVENT": {
+    "ISA": {
+      "middle": "is a kind of"
+    },
+    "ASSOCIATED_MORPHOLOGY": {
+      "middle": "has as associated morphology"
+    },
+    "ASSOCIATED_WITH": {
+      "middle": "is associated with"
+    },
+    "CAUSATIVE_AGENT": {
+      "middle": "has as causative agent"
+    },
+    "DUE_TO": {
+      "middle": "occurs due to"
+    },
+    "OCCURRENCE": {
+      "middle": "occurs during"
+    },
+    "TEMPORALLY_RELATED_TO": {
+      "middle": "is temporally related to"
+    }
+  },
+
+  "ENVIRONMENT": {
+    "ISA": {
+      "middle": "is a kind of"
+    }
+  },
+
+  "GEOGRAPHIC_LOCATION": {
+    "ISA": {
+      "middle": "is a kind of"
+    }
+  },
+
+  "SOCIAL_CONCEPT": {
+    "ISA": {
+      "middle": "is a kind of"
+    }
+  },
+
+  "SOCIAL_CONCEPT": {
+    "ISA": {
+      "middle": "is a kind of"
+    }
+  },
+
+  "ETHNIC_GROUP": {
+    "ISA": {
+      "middle": "is a kind of"
+    }
+  },
+
+  "OCCUPATION": {
+    "ISA": {
+      "middle": "is a kind of"
+    }
+  },
+
+  "PERSON": {
+    "ISA": {
+      "middle": "is a kind of"
+    }
+  },
+
+  "RELIGION_PHILOSOPHY": {
+    "ISA": {
+      "middle": "is a kind of"
+    }
+  },
+
+  "STAGING_SCALE": {
+    "ISA": {
+      "middle": "is a kind of"
+    }
+  },
+
+  "QUALIFIER_VALUE": {
+    "ISA": {
+      "middle": "is a kind of"
+    }
+  },
+
+  "RECORD_ARTIFACT": {
+    "ISA": {
+      "middle": "is a kind of"
+    }
+  }
+}
