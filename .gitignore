@@ -167,3 +167,9 @@ cython_debug/
 
 # VSCode
 .vscode/
+
+.csv
+.gz
+.zip
+.db
+.cypher
