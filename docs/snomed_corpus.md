@@ -3,6 +3,7 @@
 ## 1. Download SNOMED-CT
 Download the SNOMED-CT version from https://www.nlm.nih.gov/healthit/snomedct/international.html
 
+
 ## 2. Install the Neo4J Community 4.4.15 database.
 Change the configuration file
 ```
@@ -18,6 +19,8 @@ Optional but highly recommended: `dbms.security.auth_enabled` to `false`
 
 ## 3. Load SNOMED-CT in Neo4J
 **For Spanish, we need to load English version first and then Spanish, so Section 3.1, and then Section 3.2.**
+
+Create a virtualenv or conda env and `pip install py2neo monotonic packaging`
 
 ### 3.1 For English
 
