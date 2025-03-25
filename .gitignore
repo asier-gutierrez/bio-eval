@@ -175,3 +175,5 @@ cython_debug/
 *.cypher
 *.txt
 .DS_Store
+*.json
+*.jsonl
