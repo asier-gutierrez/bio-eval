@@ -168,8 +168,10 @@ cython_debug/
 # VSCode
 .vscode/
 
-.csv
-.gz
-.zip
-.db
-.cypher
+*.csv
+*.gz
+*.zip
+*.db
+*.cypher
+*.txt
+.DS_Store
