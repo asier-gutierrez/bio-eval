@@ -4,6 +4,7 @@ import collections
 import itertools
 import os
 import logging
+import re
 
 import numpy as np
 import scipy.stats
@@ -115,7 +116,7 @@ def analyze_clm(input_files, model_names, output_path):
 
     df = pd.DataFrame(results)
     report_statistics(df)
-    df['model_name'] = df['model_name'].apply(lambda x: x.replace('/', '\n').replace('instruct', 'it'))
+    df['model_name'] = df['model_name'].apply(lambda x: re.sub('.*/', '', x).replace('instruct', 'it'))
     sns.set_theme(style="ticks")
 
     # Initialize the figure with a logarithmic x axis
@@ -175,7 +176,7 @@ def analyze_mlm(input_files, model_names, output_path):
 
     df = pd.DataFrame(results)
     report_statistics(df)
-    df['model_name'] = df['model_name'].apply(lambda x: x.replace('/', '\n').replace('multilingual', 'mul.').replace('cased', 'cas.'))
+    df['model_name'] = df['model_name'].apply(lambda x: re.sub('.*/', '', x).replace('multilingual', 'mul.').replace('cased', 'cas.'))
     sns.set_theme(style="ticks")
 
     # Initialize the figure with a logarithmic x axis
